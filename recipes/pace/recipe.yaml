@@ -1,0 +1,44 @@
+context:
+  name: pace
+  version: "3.10"
+
+package:
+  name: ${{ name|lower }}
+  version: ${{ version }}
+
+source:
+  url: https://github.com/simplejson/simplejson/releases/download/${{ version }}/${{ name }}-${{ version }}.tar.gz
+  sha256: d58439c548433adcda98e695be53e526ba940a4b9c44fb9a05d92cd495cdd47f
+
+build:
+  noarch: python
+  script: python -m pip install . -vv --no-deps --no-build-isolation
+  number: 0
+
+requirements:
+  host:
+    - python
+    - pip
+    - setuptools
+  run:
+    - python
+
+tests:
+  - python:
+      imports:
+      - ${{ name }}
+      pip_check: true
+
+about:
+  homepage: https://github.com/ami-iit/${{ name }}
+  summary: 'Simple, fast, extensible JSON encoder/decoder for Python'
+  description: |
+  license: MIT
+  license_file: LICENSE.txt
+  documentation: https://simplejson.readthedocs.io/
+  repository: https://github.com/simplejson/simplejson
+
+extra:
+  recipe-maintainers:
+    - LisaSimpson
+    - LandoCalrissian
