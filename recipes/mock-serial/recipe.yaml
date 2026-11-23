@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json
+schema_version: 1
+
+context:
+  name: mock-serial
+  version: "0.0.1"
+
+package:
+  name: ${{ name|lower }}
+  version: ${{ version }}
+
+source:
+  url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/mock_serial-${{ version }}.tar.gz
+  sha256: 9c92de7495ac375717bbbeb4993534079d2e634f3298d4c400420c4046add06e
+
+build:
+  number: 0
+  noarch: python
+  script: ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+
+requirements:
+  host:
+    - python ${{ python_min }}.*
+    - setuptools
+    - pip
+  run:
+    - python >=${{ python_min }}
+    - pytest
+
+tests:
+  - python:
+      imports:
+        - mock_serial
+        - mock_serial.pytest
+      pip_check: true
+      python_version:
+        - ${{ python_min }}.*
+        - "*"
+
+about:
+  summary: A mock utility for testing serial devices
+  license: MIT
+  license_file: LICENCE
+  homepage: https://github.com/benthorner/mock_serial
+  repository: https://github.com/benthorner/mock_serial
+
+extra:
+  recipe-maintainers:
+    - flferretti
