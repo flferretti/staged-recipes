@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json
+schema_version: 1
+
+context:
+  name: kernels-data
+  version: "0.14.1"
+
+package:
+  name: ${{ name|lower }}
+  version: ${{ version }}
+
+source:
+  - url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/kernels_data-${{ version }}.tar.gz
+    sha256: 35c7d46da843decc1f12f098ca781b8453f21ecbabb4e18b9266c0e0b113fc82
+  - url: https://raw.githubusercontent.com/huggingface/kernels/v${{ version }}/LICENSE
+    sha256: c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4
+    file_name: LICENSE
+
+build:
+  number: 0
+  script:
+    - ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+    - cargo-bundle-licenses --format yaml --output THIRDPARTY.yml
+
+requirements:
+  build:
+    - ${{ compiler('c') }}
+    - ${{ stdlib('c') }}
+    - ${{ compiler('rust') }}
+    - cargo-bundle-licenses
+    - maturin >=1,<2
+    - if: build_platform != target_platform
+      then:
+        - cross-python_${{ target_platform }}
+        - python
+  host:
+    - python
+    - maturin >=1,<2
+    - pip
+  run:
+    - python
+
+tests:
+  - python:
+      imports:
+        - kernels_data
+      pip_check: true
+
+about:
+  summary: Kernels data structures (Python bindings)
+  license: Apache-2.0
+  license_file:
+    - LICENSE
+    - THIRDPARTY.yml
+  homepage: https://pypi.org/project/kernels-data
+  repository: https://github.com/huggingface/kernels
+
+extra:
+  recipe-maintainers:
+    - baszalmstra
+    - flferretti
