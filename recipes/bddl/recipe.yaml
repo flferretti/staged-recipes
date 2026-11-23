@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json
+schema_version: 1
+
+context:
+  name: bddl
+  version: "1.0.1"
+
+package:
+  name: ${{ name|lower }}
+  version: ${{ version }}
+
+source:
+  url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/bddl-${{ version }}.tar.gz
+  sha256: 1fa4e6e5050b93888ff6fd8455c39bfb29d3864ce06b4c37c0f781f513a2ae26
+
+build:
+  number: 0
+  noarch: python
+  script: ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+
+requirements:
+  host:
+    - python ${{ python_min }}.*
+    - setuptools
+    - pip
+  run:
+    - python >=${{ python_min }}
+    - pytest
+    - numpy
+    - networkx
+    - jupytext
+    - future
+
+tests:
+  - python:
+      imports:
+        - bddl
+      pip_check: true
+      python_version:
+        - ${{ python_min }}.*
+        - "*"
+
+about:
+  summary: Behavior Domain Definition Language for Embodied AI
+  license: MIT
+  license_file: LICENSE
+  homepage: https://github.com/StanfordVL/bddl
+  repository: https://github.com/StanfordVL/bddl
+
+extra:
+  recipe-maintainers:
+    - flferretti
