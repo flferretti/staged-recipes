@@ -1,0 +1,64 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json
+schema_version: 1
+
+context:
+  name: kernels
+  version: "0.14.1"
+
+package:
+  name: ${{ name|lower }}
+  version: ${{ version }}
+
+source:
+  - url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/kernels-${{ version }}.tar.gz
+    sha256: ba21b7b509b7a0c2d2c7a0efd546e9dda2b1022ed5ff2b8fde8e94d7637754d3
+  - url: https://raw.githubusercontent.com/huggingface/kernels/v${{ version }}/LICENSE
+    sha256: c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4
+    file_name: LICENSE
+
+build:
+  number: 0
+  noarch: python
+  script: ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  python:
+    entry_points:
+      - kernels = kernels.cli:main
+
+requirements:
+  host:
+    - python ${{ python_min }}.*
+    - setuptools
+    - pip
+  run:
+    - python >=${{ python_min }}
+    - huggingface_hub >=1.10.0
+    - kernels-data >=0.14.0
+    - packaging >=20.0
+    - pyyaml >=6
+    - tomlkit >=0.13.3
+
+tests:
+  - python:
+      imports:
+        - kernels
+      pip_check: true
+      python_version:
+        - ${{ python_min }}.*
+        - "*"
+  - requirements:
+      run:
+        - python ${{ python_min }}.*
+    script:
+      - kernels --help
+
+about:
+  summary: Download compute kernels from Hugging Face Hub
+  license: Apache-2.0
+  license_file: LICENSE
+  homepage: https://github.com/huggingface/kernels
+  repository: https://github.com/huggingface/kernels
+
+extra:
+  recipe-maintainers:
+    - baszalmstra
+    - flferretti
