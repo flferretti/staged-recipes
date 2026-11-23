@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json
+schema_version: 1
+
+context:
+  name: reachy2-sdk-api
+  version: "1.0.21"
+
+package:
+  name: ${{ name|lower }}
+  version: ${{ version }}
+
+source:
+  - url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/reachy2_sdk_api-${{ version }}.tar.gz
+    sha256: 38661dfcd476557c45337f51c1034cd198d7b72d76ea37ae0178059383b11cd0
+    patches:
+      - relax_upper_bounds.patch
+  - url: https://raw.githubusercontent.com/pollen-robotics/reachy2-sdk-api/v${{ version }}/LICENSE
+    sha256: 6e82c1c7acf04e67544228844083a21a5bffb8d4a76b9d5066d3cf2c9a917e4b
+    file_name: LICENSE
+
+build:
+  number: 0
+  noarch: python
+  script: ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+
+requirements:
+  host:
+    - python ${{ python_min }}.*
+    - setuptools
+    - pip
+  run:
+    - python >=${{ python_min }}
+    - grpcio >=1.59.0
+    - grpcio-tools >=1.59.0
+    - protobuf >=4.25.0
+
+tests:
+  - python:
+      imports:
+        - reachy2_sdk_api
+      pip_check: true
+      python_version:
+        - ${{ python_min }}.*
+        - "*"
+
+about:
+  summary: gRPC Protobuf API definition for Reachy 2 SDK
+  license: Apache-2.0
+  license_file: LICENSE
+  homepage: https://github.com/pollen-robotics/reachy2-sdk-api
+  repository: https://github.com/pollen-robotics/reachy2-sdk-api
+
+extra:
+  recipe-maintainers:
+    - flferretti
