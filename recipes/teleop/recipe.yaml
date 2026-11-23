@@ -1,0 +1,55 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/prefix-dev/recipe-format/main/schema.json
+schema_version: 1
+
+context:
+  name: teleop
+  version: "0.1.5"
+
+package:
+  name: ${{ name|lower }}
+  version: ${{ version }}
+
+source:
+  url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/teleop-${{ version }}.tar.gz
+  sha256: 9f5367b167e0f67abe818f346c467671bd2c1ad653df604bdfb2fa69b2937da9
+
+build:
+  number: 0
+  noarch: python
+  script: ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+
+requirements:
+  host:
+    - python ${{ python_min }}.*
+    - setuptools >=61
+    - wheel
+    - pip
+  run:
+    - python >=${{ python_min }}
+    - fastapi
+    - uvicorn-standard
+    - numpy
+    - transforms3d
+    - pytest
+    - requests
+    - websocket-client
+
+tests:
+  - python:
+      imports:
+        - teleop
+      pip_check: true
+      python_version:
+        - ${{ python_min }}.*
+        - "*"
+
+about:
+  summary: Turns your phone into a robot arm teleoperation device by leveraging the WebXR API
+  license: Apache-2.0
+  license_file: LICENSE
+  homepage: https://github.com/SpesRobotics/teleop
+  repository: https://github.com/SpesRobotics/teleop
+
+extra:
+  recipe-maintainers:
+    - flferretti
